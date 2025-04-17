@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Drone Telemetry Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Leaflet CSS & JS (Map) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+
+  <style>
+    body {
+      background: #f4f5f7;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .card {
+      background: white;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+    }
+    #map {
+      height: 300px;
+      width: 100%;
+      border-radius: 1rem;
+    }
+  </style>
+</head>
+<body class="text-gray-800">
+
+  <div class="max-w-6xl mx-auto px-4 py-10">
+    <h1 class="text-4xl font-bold text-center mb-10 tracking-tight">🧭 Drone Telemetry Dashboard</h1>
+
+    <!-- Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+      <div class="card"><h2 class="text-xl font-semibold mb-2">🔋 Battery</h2><p id="battery_voltage" class="text-2xl font-mono text-blue-600">--</p></div>
+      <div class="card"><h2 class="text-xl font-semibold mb-2">🧭 IMU</h2><p id="imu_data" class="text-2xl font-mono text-green-600">--</p></div>
+      <div class="card"><h2 class="text-xl font-semibold mb-2">🌡️ Temp</h2><p id="temperature" class="text-2xl font-mono text-red-500">--</p></div>
+      <div class="card"><h2 class="text-xl font-semibold mb-2">📶 Altitude</h2><p id="altitude" class="text-2xl font-mono text-yellow-600">--</p></div>
+      <div class="card"><h2 class="text-xl font-semibold mb-2">📡 Connection</h2><p id="connection_health" class="text-2xl font-mono font-bold">--</p></div>
+    </div>
+
+    <!-- Map & GPS -->
+    <div class="card mb-10">
+      <h2 class="text-xl font-semibold mb-4">🌍 GPS Map</h2>
+      <p id="gps" class="mb-4 text-lg font-mono text-purple-700">--</p>
+      <div id="map"></div>
+    </div>
+
+    <!-- Altitude Chart -->
+    <div class="card">
+      <h2 class="text-xl font-semibold mb-4">📈 Altitude Over Time</h2>
+      <canvas id="altitudeChart" height="100"></canvas>
+    </div>
+  </div>
+
+  <script>
+    // Map Initialization
+    let map = L.map('map').setView([12.9716, 77.5946], 13); // Default to Bangalore
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+    }).addTo(map);
+    let marker = L.marker([12.9716, 77.5946]).addTo(map);
+
+    function updateMap(lat, lon) {
+      marker.setLatLng([lat, lon]);
+      map.setView([lat, lon], 13);
+    }
+  </script>
+</body>
+</html>
